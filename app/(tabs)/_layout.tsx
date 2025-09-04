@@ -1,9 +1,22 @@
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
+import { useEffect } from "react";
 
+function RouteGuard({ children }: { children: React.ReactNode }) {
+  const router = useRouter()
+  const isAuth = false;
+  useEffect(() => {
+    if (!isAuth) {
+      router.replace('/auth')
+    }
+  });
+  return <>{children}</>
+}
 export default function TabLayout() {
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: "coral" }}>
+    
+    <RouteGuard>
+      <Tabs screenOptions={{ tabBarActiveTintColor: "coral" }}>
       <Tabs.Screen name="index" options={{
         title: "Home",
         tabBarIcon: ({ color, focused }) => {
@@ -12,5 +25,6 @@ export default function TabLayout() {
       }} />
       <Tabs.Screen name="login" options={{ title: "Login" }} />
     </Tabs>
+    </RouteGuard>
   );
 }

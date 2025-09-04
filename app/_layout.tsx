@@ -1,23 +1,27 @@
-import { Slot, Stack, useRouter } from "expo-router";
-import { useEffect } from "react";
-
-function RouteGuard() {
-  const router = useRouter();
-  const isAuth = false;
-  useEffect(() => {
-    if (!isAuth) {
-      router.replace('/auth')
-    }
-  },[]);
-  return <Slot/>
-}
+import { Slot, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { AuthProvider } from "@/lib/auth-context";
 
 export default function RootLayout() {
+  const router = useRouter();
+  const [isAuth, setIsAuth] = useState(false); // 🔹 replace with real auth check
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && !isAuth) {
+      router.replace("/auth");
+    }
+  }, [mounted, isAuth]);
+
+  if (!mounted) return null; // wait until app is ready
+
   return (
-    <RouteGuard>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
-    </RouteGuard>
+    <AuthProvider>
+      <Slot/>
+    </AuthProvider>
   );
 }
